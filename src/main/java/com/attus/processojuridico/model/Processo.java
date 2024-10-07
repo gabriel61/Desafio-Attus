@@ -3,6 +3,7 @@ package com.attus.processojuridico.model;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,8 +27,8 @@ public class Processo {
     private StatusProcesso status;
 
     @OneToMany(mappedBy = "processo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Parte> partes;
+    private List<Parte> partes = new ArrayList<>();
 
     @OneToMany(mappedBy = "processo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Acao> acoes;
+    private List<Acao> acoes = new ArrayList<>();
 }
