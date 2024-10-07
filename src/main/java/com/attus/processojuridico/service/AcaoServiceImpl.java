@@ -1,5 +1,6 @@
 package com.attus.processojuridico.service;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Acao;
 import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.repository.AcaoRepository;
@@ -22,7 +23,7 @@ public class AcaoServiceImpl implements AcaoService {
     @Override
     public Acao registrarAcao(Long processoId, Acao acao) {
         Processo processo = processoRepository.findById(processoId)
-                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
         acao.setProcesso(processo);
         acao.setDataRegistro(LocalDate.now());
         return acaoRepository.save(acao);
@@ -39,13 +40,13 @@ public class AcaoServiceImpl implements AcaoService {
     @Override
     public Acao buscarAcaoPorId(Long id) {
         return acaoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ação não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Ação não encontrada"));
     }
 
     @Override
     public List<Acao> listarAcoesPorProcesso(Long processoId) {
         Processo processo = processoRepository.findById(processoId)
-                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
         return processo.getAcoes();
     }
 

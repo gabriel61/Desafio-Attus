@@ -1,5 +1,6 @@
 package com.attus.processojuridico.service;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Parte;
 import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.repository.ParteRepository;
@@ -21,7 +22,7 @@ public class ParteServiceImpl implements ParteService {
     @Override
     public Parte criarParte(Long processoId, Parte parte) {
         Processo processo = processoRepository.findById(processoId)
-                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
         parte.setProcesso(processo);
         return parteRepository.save(parte);
     }
@@ -40,13 +41,13 @@ public class ParteServiceImpl implements ParteService {
     @Override
     public Parte buscarPartePorId(Long id) {
         return parteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Parte não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Parte não encontrada"));
     }
 
     @Override
     public List<Parte> listarPartesPorProcesso(Long processoId) {
         Processo processo = processoRepository.findById(processoId)
-                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
         return processo.getPartes();
     }
 
