@@ -2,6 +2,7 @@ package com.attus.processojuridico.controller;
 
 import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.service.ProcessoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class ProcessoController {
     private ProcessoService processoService;
 
     @PostMapping
-    public ResponseEntity<Processo> criarProcesso(@RequestBody Processo processo) {
+    public ResponseEntity<Processo> criarProcesso(@Valid @RequestBody Processo processo) {
         Processo novoProcesso = processoService.criarProcesso(processo);
         return new ResponseEntity<>(novoProcesso, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Processo> atualizarProcesso(@PathVariable Long id, @RequestBody Processo processo) {
+    public ResponseEntity<Processo> atualizarProcesso(@PathVariable Long id, @Valid @RequestBody Processo processo) {
         Processo processoAtualizado = processoService.atualizarProcesso(id, processo);
         return ResponseEntity.ok(processoAtualizado);
     }

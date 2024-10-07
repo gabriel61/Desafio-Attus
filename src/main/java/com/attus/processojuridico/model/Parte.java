@@ -2,6 +2,7 @@ package com.attus.processojuridico.model;
 
 import lombok.Data;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Entity
@@ -11,9 +12,11 @@ public class Parte {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "O nome é obrigatório")
     @Column(nullable = false)
     private String nome;
 
+    @NotBlank(message = "O cpf/cnpj é obrigatório")
     @Column(nullable = false)
     private String cpfCnpj;
 

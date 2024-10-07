@@ -2,6 +2,7 @@ package com.attus.processojuridico.controller;
 
 import com.attus.processojuridico.model.Parte;
 import com.attus.processojuridico.service.ParteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class ParteController {
     private ParteService parteService;
 
     @PostMapping
-    public ResponseEntity<Parte> criarParte(@PathVariable Long processoId, @RequestBody Parte parte) {
+    public ResponseEntity<Parte> criarParte(@PathVariable Long processoId, @Valid @RequestBody Parte parte) {
         Parte novaParte = parteService.criarParte(processoId, parte);
         return new ResponseEntity<>(novaParte, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Parte> atualizarParte(@PathVariable Long id, @RequestBody Parte parte) {
+    public ResponseEntity<Parte> atualizarParte(@PathVariable Long id, @Valid @RequestBody Parte parte) {
         Parte parteAtualizada = parteService.atualizarParte(id, parte);
         return ResponseEntity.ok(parteAtualizada);
     }

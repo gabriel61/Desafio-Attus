@@ -2,6 +2,7 @@ package com.attus.processojuridico.controller;
 
 import com.attus.processojuridico.model.Acao;
 import com.attus.processojuridico.service.AcaoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class AcaoController {
     private AcaoService acaoService;
 
     @PostMapping
-    public ResponseEntity<Acao> registrarAcao(@PathVariable Long processoId, @RequestBody Acao acao) {
+    public ResponseEntity<Acao> registrarAcao(@PathVariable Long processoId, @Valid @RequestBody Acao acao) {
         Acao novaAcao = acaoService.registrarAcao(processoId, acao);
         return new ResponseEntity<>(novaAcao, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Acao> atualizarAcao(@PathVariable Long id, @RequestBody Acao acao) {
+    public ResponseEntity<Acao> atualizarAcao(@PathVariable Long id, @Valid @RequestBody Acao acao) {
         Acao acaoAtualizada = acaoService.atualizarAcao(id, acao);
         return ResponseEntity.ok(acaoAtualizada);
     }
