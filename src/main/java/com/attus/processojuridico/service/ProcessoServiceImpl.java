@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProcessoServiceImpl implements ProcessoService {
@@ -27,22 +27,26 @@ public class ProcessoServiceImpl implements ProcessoService {
 
     @Override
     public Processo atualizarProcesso(Long id, Processo processoAtualizado) {
-        Processo processo = buscarProcessoPorId(id);
-        if (!processo.getNumero().equals(processoAtualizado.getNumero())) {
-            if (processoRepository.findByNumero(processoAtualizado.getNumero()) != null) {
-                throw new NotFoundException("Número do processo já existe");
+        Optional<Processo> processoOpt = processoRepository.findById(id);
+        if (processoOpt.isPresent()) {
+            Processo processo = processoOpt.get();
+            if (!processo.getNumero().equals(processoAtualizado.getNumero())) {
+                if (processoRepository.findByNumero(processoAtualizado.getNumero()) != null) {
+                    throw new NotFoundException("Número do processo já existe");
+                }
             }
+            processo.setDescricao(processoAtualizado.getDescricao());
+            processo.setStatus(processoAtualizado.getStatus());
+            processo.setNumero(processoAtualizado.getNumero());
+            return processoRepository.save(processo);
+        } else {
+            throw new NotFoundException("Processo não encontrado");
         }
-        processo.setDescricao(processoAtualizado.getDescricao());
-        processo.setStatus(processoAtualizado.getStatus());
-        processo.setNumero(processoAtualizado.getNumero());
-        return processoRepository.save(processo);
     }
 
     @Override
-    public Processo buscarProcessoPorId(Long id) {
-        return processoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
+    public Optional<Processo> buscarProcessoPorId(Long id) {
+        return processoRepository.findById(id);
     }
 
     @Override
@@ -52,8 +56,14 @@ public class ProcessoServiceImpl implements ProcessoService {
 
     @Override
     public void arquivarProcesso(Long id) {
-        Processo processo = buscarProcessoPorId(id);
-        processo.setStatus(StatusProcesso.ARQUIVADO);
-        processoRepository.save(processo);
+        Optional<Processo> processoOpt = processoRepository.findById(id);
+
+        if (processoOpt.isPresent()) {
+            Processo processo = processoOpt.get();
+            processo.setStatus(StatusProcesso.ARQUIVADO);
+            processoRepository.save(processo);
+        } else {
+            throw new NotFoundException("Processo não encontrado");
+        }
     }
 }

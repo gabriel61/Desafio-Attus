@@ -4,12 +4,12 @@ import com.attus.processojuridico.model.Processo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface ProcessoService {
     Processo criarProcesso(Processo processo);
     Processo atualizarProcesso(Long id, Processo processo);
-    Processo buscarProcessoPorId(Long id);
+    Optional<Processo> buscarProcessoPorId(Long id);
     Page<Processo> listarProcessos(Pageable pageable);
     void arquivarProcesso(Long id);
 }

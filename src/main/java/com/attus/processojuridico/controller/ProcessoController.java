@@ -1,5 +1,6 @@
 package com.attus.processojuridico.controller;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.service.ProcessoService;
 import jakarta.validation.Valid;
@@ -12,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/processos")
@@ -35,8 +36,10 @@ public class ProcessoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Processo> buscarProcesso(@PathVariable Long id) {
-        Processo processo = processoService.buscarProcessoPorId(id);
-        return ResponseEntity.ok(processo);
+        Optional<Processo> processoOpt = processoService.buscarProcessoPorId(id);
+
+        return processoOpt.map(ResponseEntity::ok)
+                .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
     }
 
     @GetMapping
