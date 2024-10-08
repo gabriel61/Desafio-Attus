@@ -21,6 +21,9 @@ public class ParteServiceImpl implements ParteService {
 
     @Override
     public Parte criarParte(Long processoId, Parte parte) {
+        if (parteRepository.existsByCpfCnpj(parte.getCpfCnpj())) {
+            throw new RuntimeException("CPF/CNPJ já registrado");
+        }
         Processo processo = processoRepository.findById(processoId)
                 .orElseThrow(() -> new NotFoundException("Processo não encontrado"));
         parte.setProcesso(processo);

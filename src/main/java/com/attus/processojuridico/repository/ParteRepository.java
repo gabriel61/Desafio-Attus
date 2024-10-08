@@ -12,4 +12,5 @@ public interface ParteRepository extends JpaRepository<Parte, Long> {
     List<Parte> findByProcessoId(Long processoId);
     List<Parte> findByTipo(TipoParte tipo);
     Parte findByCpfCnpj(String cpfCnpj);
+    boolean existsByCpfCnpj(String cpfCnpj);
 }
