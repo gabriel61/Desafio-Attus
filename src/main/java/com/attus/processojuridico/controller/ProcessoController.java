@@ -4,6 +4,10 @@ import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.service.ProcessoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +40,12 @@ public class ProcessoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Processo>> listarProcessos() {
-        List<Processo> processos = processoService.listarProcessos();
+    public ResponseEntity<Page<Processo>> listarProcessos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Page<Processo> processos = processoService.listarProcessos(pageable);
         return ResponseEntity.ok(processos);
     }
 

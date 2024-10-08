@@ -5,6 +5,8 @@ import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.model.StatusProcesso;
 import com.attus.processojuridico.repository.ProcessoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -44,8 +46,8 @@ public class ProcessoServiceImpl implements ProcessoService {
     }
 
     @Override
-    public List<Processo> listarProcessos() {
-        return processoRepository.findAll();
+    public Page<Processo> listarProcessos(Pageable pageable) {
+        return processoRepository.findAll(pageable);
     }
 
     @Override
