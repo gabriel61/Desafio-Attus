@@ -8,5 +8,5 @@ public interface AcaoService {
     Acao atualizarAcao(Long id, Acao acao);
     Acao buscarAcaoPorId(Long id);
     List<Acao> listarAcoesPorProcesso(Long processoId);
-    void removerAcao(Long id);
+    boolean removerAcao(Long id);
 }

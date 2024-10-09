@@ -1,5 +1,6 @@
 package com.attus.processojuridico.controller;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Acao;
 import com.attus.processojuridico.service.AcaoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,8 +22,12 @@ import java.util.List;
 @Tag(name = "Ações", description = "Operações relacionadas as ações de um processo jurídico")
 public class AcaoController {
 
+    private final AcaoService acaoService;
+
     @Autowired
-    private AcaoService acaoService;
+    public AcaoController(AcaoService acaoService) {
+        this.acaoService = acaoService;
+    }
 
     @Operation(summary = "Registrar ação", description = "Registra uma nova ação para um processo")
     @ApiResponse(responseCode = "201", description = "Ação registrada com sucesso",
@@ -70,12 +75,21 @@ public class AcaoController {
     }
 
     @Operation(summary = "Remover ação", description = "Remove uma ação existente")
-    @ApiResponse(responseCode = "204", description = "Ação removida com sucesso")
+    @ApiResponse(responseCode = "200", description = "Ação removida com sucesso")
     @ApiResponse(responseCode = "404", description = "Ação não encontrada")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removerAcao(@Parameter(description = "ID da ação", required = true)
-                                                @PathVariable Long id) {
-        acaoService.removerAcao(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> removerAcao(@Parameter(description = "ID da ação", required = true)
+                                              @PathVariable Long id) {
+        try {
+            boolean isRemoved = acaoService.removerAcao(id);
+            if (isRemoved) {
+                return ResponseEntity.ok("Ação removida com sucesso");
+            }
+            throw new NotFoundException("Ação não encontrada");
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao remover a ação");
+        }
     }
 }

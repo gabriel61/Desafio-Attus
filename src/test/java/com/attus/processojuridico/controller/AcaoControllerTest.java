@@ -88,10 +88,32 @@ class AcaoControllerTest {
     }
 
     @Test
-    void deveRemoverAcao() {
-        ResponseEntity<Void> response = acaoController.removerAcao(1L);
+    void deveRemoverAcaoComSucesso() {
+        Long acaoId = 1L;
+        when(acaoService.removerAcao(acaoId)).thenReturn(true);
+        ResponseEntity<String> response = acaoController.removerAcao(acaoId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Ação removida com sucesso", response.getBody());
+        verify(acaoService, times(1)).removerAcao(acaoId);
+    }
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(acaoService, times(1)).removerAcao(1L);
+    @Test
+    void deveRetornar404QuandoAcaoNaoEncontrada() {
+        Long acaoId = 1L;
+        when(acaoService.removerAcao(acaoId)).thenReturn(false);
+        ResponseEntity<String> response = acaoController.removerAcao(acaoId);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Ação não encontrada", response.getBody());
+        verify(acaoService, times(1)).removerAcao(acaoId);
+    }
+
+    @Test
+    void deveRetornar500QuandoOcorreUmErro() {
+        Long acaoId = 1L;
+        when(acaoService.removerAcao(acaoId)).thenThrow(new RuntimeException("Erro inesperado"));
+        ResponseEntity<String> response = acaoController.removerAcao(acaoId);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Erro ao remover a ação", response.getBody());
+        verify(acaoService, times(1)).removerAcao(acaoId);
     }
 }
