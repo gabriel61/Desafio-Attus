@@ -97,11 +97,11 @@ O diagrama de classes apresenta a estrutura das principais entidades do sistema.
    ```
 2. Navegue até o diretório do projeto:
    ```bash
-   cd processo-juridico
+   cd Desafio-Attus
    ```
 3. Compile e execute o projeto usando Maven:
    ```bash
-   cd mvn spring-boot:run
+   mvn spring-boot:run
    ```
 4. A aplicação estará rodando em `http://localhost:8080`.
 
