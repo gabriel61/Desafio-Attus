@@ -1,5 +1,6 @@
 package com.attus.processojuridico.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -35,5 +36,6 @@ public class Processo {
     private List<Parte> partes = new ArrayList<>();
 
     @OneToMany(mappedBy = "processo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Acao> acoes = new ArrayList<>();
 }

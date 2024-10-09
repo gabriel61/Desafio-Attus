@@ -1,5 +1,6 @@
 package com.attus.processojuridico.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -27,5 +28,6 @@ public class Acao {
 
     @ManyToOne
     @JoinColumn(name = "processo_id", nullable = false)
+    @JsonBackReference
     private Processo processo;
 }
