@@ -8,14 +8,13 @@ Este projeto é uma API para gerenciamento de processos jurídicos, desenvolvida
 - [Avaliação Teórica](#avaliação-teórica)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Requisitos para Executar o Projeto](#requisitos-para-executar-o-projeto)
-- [Instalação](#instalação)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Diagrama de Classes](#diagrama-de-classes)
-- [Endpoints](#endpoints)
-- [Resultados](#resultados)
+- [Como Executar o Projeto](#como-executar-o-projeto)
+- [Configuração do Banco de Dados](#configuração-do-banco-de-dados)
+- [Endpoints da API](#endpoints-da-api)
 - [Jacoco](#jacoco)
 - [SonarQube](#sonarqube)
-- [Como Executar o Projeto](#como-executar-o-projeto)
 - [Licença](#licença)
 
 ## Avaliação Teórica
@@ -51,7 +50,6 @@ Este projeto é uma API para gerenciamento de processos jurídicos, desenvolvida
 - Spring Boot 3.3.4
 - Spring Data JPA
 - PostgreSQL
-- Maven
 - Lombok
 - JUnit
 - Swagger (Springdoc OpenAPI)
@@ -59,6 +57,7 @@ Este projeto é uma API para gerenciamento de processos jurídicos, desenvolvida
 - SonarQube
 - IntelliJ IDEA
 - Insomnia
+- LucidChart
 
 ## Requisitos para Executar o Projeto
 - JDK 17
@@ -67,7 +66,7 @@ Este projeto é uma API para gerenciamento de processos jurídicos, desenvolvida
 - Banco de dados H2 Database para os testes
 
 ## Estrutura do Projeto
-    ```
+    
     processo-juridico/
     ├── src
     │   ├── main
@@ -76,7 +75,7 @@ Este projeto é uma API para gerenciamento de processos jurídicos, desenvolvida
     │   └── test
     ├── pom.xml
     └── README.md
-    ```
+
 * **model**: Contêm as entidades da aplicação, como `Processo`, `Parte`, `Acao`, `StatusProcesso`, `TipoAcao` e `TipoParte`.
 * **repository**: Interfaces para acesso aos dados das entidades, como `ProcessoRepository`, `AcaoRepository` e `ParteRepository`.
 * **service**: Contêm a lógica de negócios e regras de validação, como `ProcessoService`, `ProcessoServiceImpl`, `AcaoService`, `AcaoServiceImpl`, `ParteService` e `ParteServiceImpl`.
@@ -243,8 +242,8 @@ Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICEN
 <br>
 
 <a href="https://github.com/gabriel61">
- <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/gabriel61" width="100px;" alt=""/>
-<br>
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/gabriel61" width="100px;" alt="">
+</a>
 
 [![Linkedin Badge](https://img.shields.io/badge/-gabrielsampaio-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/gabriel-oliveira-852759190/)](https://www.linkedin.com/in/gabriel-oliveira-852759190/)
 <br>
