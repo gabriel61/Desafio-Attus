@@ -32,7 +32,7 @@ public class ParteServiceImpl implements ParteService {
 
     @Override
     public Parte atualizarParte(Long id, Parte parteAtualizada) {
-        Parte parte = buscarPartePorId(id);
+        Parte parte = buscarPartePorIdEProcesso(id, parteAtualizada.getProcesso().getId());
         parte.setNome(parteAtualizada.getNome());
         parte.setCpfCnpj(parteAtualizada.getCpfCnpj());
         parte.setTipo(parteAtualizada.getTipo());
@@ -41,10 +41,9 @@ public class ParteServiceImpl implements ParteService {
         return parteRepository.save(parte);
     }
 
-    @Override
-    public Parte buscarPartePorId(Long id) {
-        return parteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Parte não encontrada"));
+    public Parte buscarPartePorIdEProcesso(Long id, Long processoId) {
+        return parteRepository.findByIdAndProcessoId(id, processoId)
+                .orElseThrow(() -> new NotFoundException("Parte não encontrada no processo"));
     }
 
     @Override
@@ -55,8 +54,9 @@ public class ParteServiceImpl implements ParteService {
     }
 
     @Override
-    public void removerParte(Long id) {
-        Parte parte = buscarPartePorId(id);
+    public boolean removerParte(Long id, Long processoId) {
+        Parte parte = buscarPartePorIdEProcesso(id, processoId);
         parteRepository.delete(parte);
+        return true;
     }
 }

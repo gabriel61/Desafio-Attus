@@ -6,7 +6,7 @@ import java.util.List;
 public interface ParteService {
     Parte criarParte(Long processoId, Parte parte);
     Parte atualizarParte(Long id, Parte parte);
-    Parte buscarPartePorId(Long id);
+    Parte buscarPartePorIdEProcesso(Long id, Long processoId);
     List<Parte> listarPartesPorProcesso(Long processoId);
-    void removerParte(Long id);
+    boolean removerParte(Long id, Long processoId);
 }

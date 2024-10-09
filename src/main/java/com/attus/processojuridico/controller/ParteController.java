@@ -1,5 +1,6 @@
 package com.attus.processojuridico.controller;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Parte;
 import com.attus.processojuridico.service.ParteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,8 +22,12 @@ import java.util.List;
 @Tag(name = "Partes", description = "Operações relacionadas as partes de um processo jurídico")
 public class ParteController {
 
+    private final ParteService parteService;
+
     @Autowired
-    private ParteService parteService;
+    public ParteController(ParteService parteService) {
+        this.parteService = parteService;
+    }
 
     @Operation(summary = "Criar parte", description = "Cria uma nova parte para um processo")
     @ApiResponse(responseCode = "201", description = "Parte criada com sucesso",
@@ -53,18 +58,24 @@ public class ParteController {
             content = @Content(schema = @Schema(implementation = Parte.class)))
     @ApiResponse(responseCode = "404", description = "Parte não encontrada")
     @GetMapping("/{id}")
-    public ResponseEntity<Parte> buscarParte(@Parameter(description = "ID da parte", required = true)
-                                                 @PathVariable Long id) {
-        Parte parte = parteService.buscarPartePorId(id);
-        return ResponseEntity.ok(parte);
+    public ResponseEntity<Object> buscarParte(
+            @Parameter(description = "ID do processo", required = true) @PathVariable Long processoId,
+            @Parameter(description = "ID da parte", required = true) @PathVariable Long id) {
+        try {
+            Parte parte = parteService.buscarPartePorIdEProcesso(id, processoId);
+            return ResponseEntity.ok(parte);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @Operation(summary = "Listar partes", description = "Lista todas as partes de um processo")
     @ApiResponse(responseCode = "200", description = "Partes encontradas",
-            content = @Content(schema = @Schema(implementation = List.class)))
+            content = @Content(schema = @Schema(implementation = Parte.class)))
+    @ApiResponse(responseCode = "404", description = "Processo não encontrado")
     @GetMapping
     public ResponseEntity<List<Parte>> listarPartes(@Parameter(description = "ID do processo", required = true)
-                                                        @PathVariable Long processoId) {
+                                                    @PathVariable Long processoId) {
         List<Parte> partes = parteService.listarPartesPorProcesso(processoId);
         return ResponseEntity.ok(partes);
     }
@@ -73,9 +84,14 @@ public class ParteController {
     @ApiResponse(responseCode = "204", description = "Parte removida com sucesso")
     @ApiResponse(responseCode = "404", description = "Parte não encontrada")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removerParte(@Parameter(description = "ID da parte", required = true)
-                                                 @PathVariable Long id) {
-        parteService.removerParte(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> removerParte(@Parameter(description = "ID do processo", required = true)
+                                               @PathVariable Long processoId,
+                                               @Parameter(description = "ID da parte", required = true)
+                                               @PathVariable Long id) {
+        boolean isRemoved = parteService.removerParte(processoId, id);
+        if (!isRemoved) {
+            throw new NotFoundException("Parte não encontrada");
+        }
+        return ResponseEntity.ok("Parte removida com sucesso");
     }
 }

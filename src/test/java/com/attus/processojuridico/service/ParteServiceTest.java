@@ -78,7 +78,7 @@ class ParteServiceTest {
 
     @Test
     void deveAtualizarParte() {
-        when(parteRepository.findById(1L)).thenReturn(Optional.of(parteExemplo));
+        when(parteRepository.findByIdAndProcessoId(1L, 1L)).thenReturn(Optional.of(parteExemplo));
         when(parteRepository.save(any(Parte.class))).thenReturn(parteExemplo);
 
         Parte parteAtualizada = parteService.atualizarParte(1L, parteExemplo);
@@ -98,10 +98,10 @@ class ParteServiceTest {
     }
 
     @Test
-    void deveBuscarPartePorId() {
-        when(parteRepository.findById(1L)).thenReturn(Optional.of(parteExemplo));
+    void deveBuscarPartePorIdEProcesso() {
+        when(parteRepository.findByIdAndProcessoId(1L, 1L)).thenReturn(Optional.of(parteExemplo));
 
-        Parte parteEncontrada = parteService.buscarPartePorId(1L);
+        Parte parteEncontrada = parteService.buscarPartePorIdEProcesso(1L, 1L);
 
         assertNotNull(parteEncontrada);
         assertEquals(parteExemplo.getNome(), parteEncontrada.getNome());
@@ -109,10 +109,10 @@ class ParteServiceTest {
 
     @Test
     void deveLancarExceptionAoBuscarParteInexistente() {
-        when(parteRepository.findById(1L)).thenReturn(Optional.empty());
+        when(parteRepository.findByIdAndProcessoId(1L, 1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            parteService.buscarPartePorId(1L);
+            parteService.buscarPartePorIdEProcesso(1L, 1L);
         });
     }
 
@@ -141,19 +141,19 @@ class ParteServiceTest {
 
     @Test
     void deveRemoverParte() {
-        when(parteRepository.findById(1L)).thenReturn(Optional.of(parteExemplo));
+        when(parteRepository.findByIdAndProcessoId(1L, 1L)).thenReturn(Optional.of(parteExemplo));
 
-        parteService.removerParte(1L);
+        parteService.removerParte(1L, 1L);
 
         verify(parteRepository, times(1)).delete(parteExemplo);
     }
 
     @Test
     void deveLancarExceptionAoRemoverParteInexistente() {
-        when(parteRepository.findById(1L)).thenReturn(Optional.empty());
+        when(parteRepository.findByIdAndProcessoId(1L, 1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            parteService.removerParte(1L);
+            parteService.removerParte(1L, 1L);
         });
     }
 }

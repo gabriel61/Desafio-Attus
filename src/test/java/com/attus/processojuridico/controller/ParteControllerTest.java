@@ -1,5 +1,6 @@
 package com.attus.processojuridico.controller;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Parte;
 import com.attus.processojuridico.model.TipoParte;
 import com.attus.processojuridico.service.ParteService;
@@ -67,13 +68,27 @@ class ParteControllerTest {
 
     @Test
     void deveBuscarParte() {
-        when(parteService.buscarPartePorId(1L)).thenReturn(parteExemplo);
+        Long processoId = 1L;
+        when(parteService.buscarPartePorIdEProcesso(1L, processoId)).thenReturn(parteExemplo);
 
-        ResponseEntity<Parte> response = parteController.buscarParte(1L);
+        ResponseEntity<Object> response = parteController.buscarParte(processoId, 1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(parteExemplo, response.getBody());
-        verify(parteService, times(1)).buscarPartePorId(1L);
+        verify(parteService, times(1)).buscarPartePorIdEProcesso(1L, processoId);
+    }
+
+    @Test
+    void deveRetornar404QuandoParteNaoEncontrada() {
+        Long processoId = 1L;
+        Long parteId = 1L;
+
+        when(parteService.buscarPartePorIdEProcesso(parteId, processoId)).thenThrow(new NotFoundException("Parte não encontrada"));
+
+        ResponseEntity<Object> response = parteController.buscarParte(processoId, parteId);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Parte não encontrada", response.getBody());
     }
 
     @Test
@@ -90,10 +105,30 @@ class ParteControllerTest {
     }
 
     @Test
-    void deveRemoverParte() {
-        ResponseEntity<Void> response = parteController.removerParte(1L);
+    void deveRemoverParteComSucesso() {
+        Long processoId = 1L;
+        Long parteId = 1L;
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(parteService, times(1)).removerParte(1L);
+        when(parteService.removerParte(processoId, parteId)).thenReturn(true);
+
+        ResponseEntity<String> response = parteController.removerParte(processoId, parteId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Parte removida com sucesso", response.getBody());
+
+        verify(parteService, times(1)).removerParte(processoId, parteId);
+    }
+
+    @Test
+    void deveRetornar404QuandoParteNaoEncontradaParaRemocao() {
+        Long processoId = 1L;
+        Long parteId = 1L;
+
+        when(parteService.removerParte(processoId, parteId)).thenReturn(false);
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            parteController.removerParte(processoId, parteId);
+        });
+
+        assertEquals("Parte não encontrada", exception.getMessage());
+        verify(parteService, times(1)).removerParte(processoId, parteId);
     }
 }
