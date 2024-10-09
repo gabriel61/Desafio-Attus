@@ -51,8 +51,9 @@ public class AcaoServiceImpl implements AcaoService {
     }
 
     @Override
-    public void removerAcao(Long id) {
+    public boolean removerAcao(Long id) {
         Acao acao = buscarAcaoPorId(id);
         acaoRepository.delete(acao);
+        return true;
     }
 }
