@@ -1,5 +1,6 @@
 package com.attus.processojuridico.service;
 
+import com.attus.processojuridico.exception.NotFoundException;
 import com.attus.processojuridico.model.Processo;
 import com.attus.processojuridico.model.StatusProcesso;
 import com.attus.processojuridico.repository.ProcessoRepository;
@@ -11,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 class ProcessoServiceTest {
 
     @Mock
@@ -41,6 +44,7 @@ class ProcessoServiceTest {
         processo.setDataAbertura(LocalDate.now());
         processo.setStatus(StatusProcesso.ATIVO);
 
+        when(processoRepository.findByNumero(processo.getNumero())).thenReturn(null);
         when(processoRepository.save(any(Processo.class))).thenReturn(processo);
 
         Processo resultado = processoService.criarProcesso(processo);
@@ -48,6 +52,20 @@ class ProcessoServiceTest {
         assertNotNull(resultado);
         assertEquals("12345", resultado.getNumero());
         verify(processoRepository, times(1)).save(any(Processo.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoCriarProcessoComNumeroExistente() {
+        Processo processoExistente = new Processo();
+        processoExistente.setNumero("12345");
+
+        when(processoRepository.findByNumero(processoExistente.getNumero())).thenReturn(processoExistente);
+
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            processoService.criarProcesso(processoExistente);
+        });
+
+        assertEquals("Número do processo já existe", exception.getMessage());
     }
 
     @Test
@@ -75,6 +93,41 @@ class ProcessoServiceTest {
         assertEquals(StatusProcesso.SUSPENSO, resultado.getStatus());
         verify(processoRepository, times(1)).findById(id);
         verify(processoRepository, times(1)).save(any(Processo.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoAtualizarProcessoInexistente() {
+        Long id = 1L;
+        Processo processoAtualizado = new Processo();
+        processoAtualizado.setNumero("12345");
+
+        when(processoRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            processoService.atualizarProcesso(id, processoAtualizado);
+        });
+
+        assertEquals("Processo não encontrado", exception.getMessage());
+    }
+
+    @Test
+    void deveLancarExcecaoAoAtualizarProcessoComNumeroExistente() {
+        Long id = 1L;
+        Processo processoExistente = new Processo();
+        processoExistente.setId(id);
+        processoExistente.setNumero("12345");
+
+        Processo processoAtualizado = new Processo();
+        processoAtualizado.setNumero("54321");
+
+        when(processoRepository.findById(id)).thenReturn(Optional.of(processoExistente));
+        when(processoRepository.findByNumero("54321")).thenReturn(processoExistente);
+
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            processoService.atualizarProcesso(id, processoAtualizado);
+        });
+
+        assertEquals("Número do processo já existe", exception.getMessage());
     }
 
     @Test
@@ -123,5 +176,18 @@ class ProcessoServiceTest {
         assertEquals(StatusProcesso.ARQUIVADO, processo.getStatus());
         verify(processoRepository, times(1)).findById(id);
         verify(processoRepository, times(1)).save(processo);
+    }
+
+    @Test
+    void deveLancarExcecaoAoArquivarProcessoInexistente() {
+        Long id = 1L;
+
+        when(processoRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            processoService.arquivarProcesso(id);
+        });
+
+        assertEquals("Processo não encontrado", exception.getMessage());
     }
 }
